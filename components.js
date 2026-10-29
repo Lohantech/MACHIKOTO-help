@@ -37,6 +37,7 @@ function loadHeader(rootPath = "") {
   const headerHTML = `
   <div id="topbar">
     <a href="https://wahoo.japan-vi.be/index">MACHIKOTO</a>
+    <a href="https://hiroba.japan-vi.be/index">ひろば</a>
   </div>
 
   <header id="header">
