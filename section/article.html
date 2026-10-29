@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MACHIKOTO | ヘルプ</title>
+  <link rel="icon" type="image/png" href="../aero_touch/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="../section_style/homehelp.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <!-- Markdown parser (pinned version to prevent CDN path changes) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+</head>
+<body>
+
+  <!-- Centralized Header Container -->
+  <div id="global-header"></div>
+
+  <div id="breadcrumb">
+    <a href="../index.html">ホーム</a> <span>&gt;</span> <span id="article-title-crumb">記事</span>
+  </div>
+
+  <main id="main" class="with-sidebar">
+
+    <div id="article">
+
+      <div id="article-header">
+        <h1 id="article-title">読み込み中...</h1>
+        <div class="meta" id="article-meta">最終更新：2026年10月11日</div>
+      </div>
+
+      <!-- Container where markdown text is rendered -->
+      <div id="article-body"><p>読み込み中...</p></div>
+
+      <div id="article-feedback">
+        <span>この記事は役に立ちましたか？</span>
+        <button type="button" onclick="feedback(true)">👍 はい</button>
+        <button type="button" onclick="feedback(false)">👎 いいえ</button>
+        <span id="feedback-msg" style="color:var(--blue-mid);display:none;"></span>
+      </div>
+
+    </div>
+
+    <aside id="sidebar">
+      <div class="side-box">
+        <div class="side-title">📞 お問い合わせ</div>
+        <ul>
+          <li><a href="mailto:support@japan-vi.be">メールでお問い合わせ</a></li>
+        </ul>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Centralized Footer Container -->
+  <div id="global-footer"></div>
+
+  <script src="../components.js"></script>
+  <script>
+    loadHeader("../");
+    loadFooter("../");
+
+    const metadataMap = {
+      'browser': {
+        title: 'ブラウザの設定方法（ホームページと新しいタブ）',
+        category: '起動・設定'
+      },
+      'Credit': {
+        title: 'クレジット表示と貢献者',
+        category: 'プロジェクト情報'
+      },
+      'SPC': {
+        title: 'プライバシーポリシーおよび利用規約',
+        category: '規約・ポリシー'
+      }
+    };
+
+    // Legacy alias redirect mapping (handles typos and case sensitivity)
+    const aliases = { 'broswer': 'browser', 'credit': 'Credit', 'spc': 'SPC' };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let docName = urlParams.get('doc') || 'browser';
+    docName = aliases[docName] || docName;
+
+    const bodyEl = document.getElementById('article-body');
+
+    function showError(html) {
+      document.getElementById('article-title').textContent = '記事が見つかりません';
+      document.getElementById('article-title-crumb').textContent = '記事が見つかりません';
+      document.getElementById('article-meta').textContent = '';
+      bodyEl.innerHTML = html;
+    }
+
+    const meta = metadataMap[docName];
+
+    if (!meta) {
+      // Unknown document name: do not attempt to fetch missing files
+      showError('<p>指定された記事は存在しません。<a href="../index.html">ホームに戻る</a></p>');
+    } else {
+      document.title = `${meta.title} | MACHIKOTO`;
+      document.getElementById('article-title').textContent = meta.title;
+      document.getElementById('article-title-crumb').textContent = meta.title;
+      document.getElementById('article-meta').textContent = `最終更新：2026年10月11日 | カテゴリ：${meta.category}`;
+
+      if (window.location.protocol === 'file:') {
+        showError('<div class="warning">⚠️ このページを「ファイルを直接開く」形式（file://）で表示しています。ブラウザの制限により記事を読み込めません。GitHub Pages などのサーバー、またはローカルサーバー（例：<code>python -m http.server</code>）経由で開いてください。</div>');
+      } else if (typeof marked === 'undefined') {
+        showError('<p>Markdown ライブラリを読み込めませんでした。ネットワーク接続を確認して、ページを再読み込みしてください。</p>');
+      } else {
+        loadArticle(docName);
+      }
+    }
+
+    // Try several possible locations and display the first file found
+    async function loadArticle(name) {
+      const candidates = [
+        `../articles/${name}.md`,
+        `../article/${name}.md`,
+        `../${name}.md`,
+        `./${name}.md`,
+        `../articles/${name.toLowerCase()}.md`
+      ];
+
+      for (const url of candidates) {
+        try {
+          const response = await fetch(url, { cache: 'no-cache' });
+          if (!response.ok) continue;
+          const text = await response.text();
+          // Fallback guard: handles web hosts that return HTML 404 pages with a 200 status code
+          if (/^\s*<!doctype html|^\s*<html/i.test(text)) continue;
+          bodyEl.innerHTML = marked.parse(text);
+          return;
+        } catch (e) {
+          // Fall through to the next path
+        }
+      }
+      bodyEl.innerHTML = `<p>記事ファイルが見つかりませんでした（<code>articles/${name}.md</code>）。</p>
+        <p><a href="../index.html">ホームに戻る</a></p>`;
+    }
+
+    function feedback(ok) {
+      const msg = document.getElementById('feedback-msg');
+      msg.textContent = ok ? 'ありがとうございます！' : 'フィードバックを送信しました。';
+      msg.style.display = 'inline';
+    }
+  </script>
+</body>
+</html>
