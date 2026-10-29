@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MACHIKOTO | ヘルプ</title>
   <link rel="icon" type="image/png" href="../aero_touch/favicon.png">
-  <link rel="canonical" href="https://help.japan-vi.be/index">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="../section_style/homehelp.css">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
-  
-  <!-- Markdown parser -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <!-- Markdown parser (version fixée pour éviter les changements de chemin du CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 </head>
 <body>
 
@@ -32,12 +31,12 @@
       </div>
 
       <!-- Container where markdown text is rendered -->
-      <div id="article-body"></div>
+      <div id="article-body"><p>読み込み中...</p></div>
 
       <div id="article-feedback">
         <span>この記事は役に立ちましたか？</span>
-        <button onclick="feedback(true)">👍 はい</button>
-        <button onclick="feedback(false)">👎 いいえ</button>
+        <button type="button" onclick="feedback(true)">👍 はい</button>
+        <button type="button" onclick="feedback(false)">👎 いいえ</button>
         <span id="feedback-msg" style="color:var(--blue-mid);display:none;"></span>
       </div>
 
@@ -63,7 +62,7 @@
     loadFooter("../");
 
     const metadataMap = {
-      'broswer': {
+      'browser': {
         title: 'ブラウザの設定方法（ホームページと新しいタブ）',
         category: '起動・設定'
       },
@@ -77,27 +76,68 @@
       }
     };
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const docName = urlParams.get('doc') || 'broswer';
+    // Anciens liens (faute de frappe "broswer") et noms en minuscules => redirigés
+    const aliases = { 'broswer': 'browser', 'credit': 'Credit', 'spc': 'SPC' };
 
-    if (metadataMap[docName]) {
-      document.title = `${metadataMap[docName].title} | MACHIKOTO`;
-      document.getElementById('article-title').textContent = metadataMap[docName].title;
-      document.getElementById('article-title-crumb').textContent = metadataMap[docName].title;
-      document.getElementById('article-meta').textContent = `最終更新：2026年10月11日 | カテゴリ：${metadataMap[docName].category}`;
+    const urlParams = new URLSearchParams(window.location.search);
+    let docName = urlParams.get('doc') || 'browser';
+    docName = aliases[docName] || docName;
+
+    const bodyEl = document.getElementById('article-body');
+
+    function showError(html) {
+      document.getElementById('article-title').textContent = '記事が見つかりません';
+      document.getElementById('article-title-crumb').textContent = '記事が見つかりません';
+      document.getElementById('article-meta').textContent = '';
+      bodyEl.innerHTML = html;
     }
 
-    fetch(`../articles/${docName}.md`)
-      .then(response => {
-        if (!response.ok) throw new Error('File not found');
-        return response.text();
-      })
-      .then(markdownText => {
-        document.getElementById('article-body').innerHTML = marked.parse(markdownText);
-      })
-      .catch(error => {
-        document.getElementById('article-body').innerHTML = '<p>記事が見つかりませんでした。</p>';
-      });
+    const meta = metadataMap[docName];
+
+    if (!meta) {
+      // Nom de document inconnu : on ne tente même pas de charger un fichier
+      showError('<p>指定された記事は存在しません。<a href="../index.html">ホームに戻る</a></p>');
+    } else {
+      document.title = `${meta.title} | MACHIKOTO`;
+      document.getElementById('article-title').textContent = meta.title;
+      document.getElementById('article-title-crumb').textContent = meta.title;
+      document.getElementById('article-meta').textContent = `最終更新：2026年10月11日 | カテゴリ：${meta.category}`;
+
+      if (window.location.protocol === 'file:') {
+        showError('<div class="warning">⚠️ このページを「ファイルを直接開く」形式（file://）で表示しています。ブラウザの制限により記事を読み込めません。GitHub Pages などのサーバー、またはローカルサーバー（例：<code>python -m http.server</code>）経由で開いてください。</div>');
+      } else if (typeof marked === 'undefined') {
+        showError('<p>Markdown ライブラリを読み込めませんでした。ネットワーク接続を確認して、ページを再読み込みしてください。</p>');
+      } else {
+        loadArticle(docName);
+      }
+    }
+
+    // Essaie plusieurs emplacements possibles et affiche le premier fichier trouvé.
+    async function loadArticle(name) {
+      const candidates = [
+        `../articles/${name}.md`,
+        `../article/${name}.md`,
+        `../${name}.md`,
+        `./${name}.md`,
+        `../articles/${name.toLowerCase()}.md`
+      ];
+
+      for (const url of candidates) {
+        try {
+          const response = await fetch(url, { cache: 'no-cache' });
+          if (!response.ok) continue;
+          const text = await response.text();
+          // Garde-fou : certains hébergeurs renvoient une page HTML 404 avec un code 200
+          if (/^\s*<!doctype html|^\s*<html/i.test(text)) continue;
+          bodyEl.innerHTML = marked.parse(text);
+          return;
+        } catch (e) {
+          // on passe au chemin suivant
+        }
+      }
+      bodyEl.innerHTML = `<p>記事ファイルが見つかりませんでした（<code>articles/${name}.md</code>）。</p>
+        <p><a href="../index.html">ホームに戻る</a></p>`;
+    }
 
     function feedback(ok) {
       const msg = document.getElementById('feedback-msg');
