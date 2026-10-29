@@ -77,11 +77,15 @@
       'privacy': {
         title: 'MACHIKOTO - ひろば : プライバシーポリシー',
         category: '規約・ポリシー'
+      },
+      'account_deleted': {
+        title: 'MACHIKOTO - ひろば : アカウントの削除手続き',
+        category: '規約・ポリシー'
       }
       };
 
     // Legacy alias redirect mapping (handles typos and case sensitivity)
-    const aliases = { 'broswer': 'browser', 'credit': 'Credit', 'spc': 'SPC', 'privacy': 'privacy' };
+    const aliases = { 'broswer': 'browser', 'credit': 'Credit', 'spc': 'SPC', 'privacy': 'privacy', 'account_deleted': 'account_deleted' };
 
     const urlParams = new URLSearchParams(window.location.search);
     let docName = urlParams.get('doc') || 'browser';
