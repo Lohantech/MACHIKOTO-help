@@ -2,9 +2,7 @@
 // CENTRALIZED COMPONENTS & SEARCH ENGINE (HEADER, NAV, FOOTER)
 // ==========================================================================
 
-// Single list of articles: title + search keywords[cite: 1].
-// (To add an article: add an entry here + a file articles/<id>.md[cite: 1]
-//  + an entry in metadataMap of section/article.html)[cite: 1]
+// Single list of articles: title + search keywords.
 const ARTICLES = [
   {
     id: 'browser',
@@ -26,7 +24,7 @@ const ARTICLES = [
   }
 ];
 
-// Path to the article page, depending on the current location[cite: 1].
+// Path to the article page, depending on current location.
 let ROOT_PATH = '';
 
 function articleUrl(id) {
@@ -51,11 +49,14 @@ function loadHeader(rootPath = "") {
       <div id="welcome-search">
         <div id="welcome">
           <div class="welcome-title">ようこそ MACHIKOTO | ヘルプ</div>
-          <p>お探しのサポート情報を検索するか、<br>下のカテゴリからお選びください。</p>
+          <p>お探しのサポート情報を検索するか、下のカテゴリからお選びください。</p>
         </div>
         <form id="search-box" role="search">
-          <input type="text" placeholder="記事・キーワードを検索…" id="searchInput" autocomplete="off" aria-label="検索" />
-          <button type="submit">検索</button>
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="記事・キーワードを検索…" id="searchInput" autocomplete="off" aria-label="検索" />
+          </div>
+          <button type="submit" class="win7-button">検索</button>
         </form>
       </div>
     </div>
@@ -63,9 +64,9 @@ function loadHeader(rootPath = "") {
 
   <nav id="nav-strip">
     <ul>
-      <li><a href="${rootPath}index.html">🏠 ホーム</a></li>
-      <li><a href="${articleUrl('browser')}">初めてご利用の方はこちらをクリック</a></li>
-      <li><a href="${articleUrl('SPC')}">サイトの不具合</a></li>
+      <li><a href="${rootPath}index.html" class="win7-nav-btn">🏠 ホーム</a></li>
+      <li><a href="${articleUrl('browser')}" class="win7-nav-btn">初めてご利用の方はこちらをクリック</a></li>
+      <li><a href="${articleUrl('SPC')}" class="win7-nav-btn">サイトの不具合</a></li>
     </ul>
   </nav>
   `;
@@ -74,18 +75,24 @@ function loadHeader(rootPath = "") {
   if (!headerContainer) return;
   headerContainer.innerHTML = headerHTML;
 
-  // Logo: if the image is missing, display the fallback text[cite: 1]
+  // Logo fallback handler: displays text if image is missing
   const logo = document.getElementById('logo-img');
-  logo.addEventListener('error', function () {
-    logo.style.display = 'none';
-    document.getElementById('logo-fallback').style.display = 'block';
-  });
+  if (logo) {
+    logo.addEventListener('error', function () {
+      logo.style.display = 'none';
+      const fallback = document.getElementById('logo-fallback');
+      if (fallback) fallback.style.display = 'block';
+    });
+  }
 
-  // The form handles both the button and the Enter key[cite: 1]
-  document.getElementById('search-box').addEventListener('submit', function (e) {
-    e.preventDefault();
-    doSearch();
-  });
+  // Handle both button click and Enter key submit
+  const searchBox = document.getElementById('search-box');
+  if (searchBox) {
+    searchBox.addEventListener('submit', function (e) {
+      e.preventDefault();
+      doSearch();
+    });
+  }
 }
 
 function loadFooter(rootPath = "") {
@@ -108,7 +115,7 @@ function loadFooter(rootPath = "") {
   if (footerContainer) footerContainer.innerHTML = footerHTML;
 }
 
-// Normalize: lowercase, full-width -> half-width (ＡＢＣ -> abc), unified katakana/hiragana[cite: 1]
+// Normalizes query string: lowercase, full-width to half-width, unified hiragana/katakana
 function normalize(str) {
   return str
     .normalize('NFKC')
@@ -117,7 +124,7 @@ function normalize(str) {
     .trim();
 }
 
-// Tolerant search engine (partial search in title and keywords)[cite: 1]
+// Tolerant search engine execution
 function doSearch() {
   const searchInput = document.getElementById('searchInput');
   if (!searchInput) return;
@@ -133,9 +140,9 @@ function doSearch() {
     if (normalize(article.title).includes(q)) score += 3;
     article.keywords.forEach(kw => {
       const k = normalize(kw);
-      if (k === q) score += 5;                    // exact match[cite: 1]
-      else if (k.includes(q)) score += 2;         // partial input (e.g. "ブラ")[cite: 1]
-      else if (q.length >= 2 && q.includes(k)) score += 1; // phrase containing the keyword[cite: 1]
+      if (k === q) score += 5;                            // Exact match
+      else if (k.includes(q)) score += 2;                 // Partial match
+      else if (q.length >= 2 && q.includes(k)) score += 1; // Phrase match
     });
     if (score > bestScore) { bestScore = score; best = article; }
   });
