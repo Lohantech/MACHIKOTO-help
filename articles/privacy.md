@@ -37,6 +37,3 @@
 <div class="note">
 💡 <strong>謝辞：</strong> このプロジェクトは主に日本の方々を対象としており、ウェブサイトやプロジェクトは日本語で記述（作成）されます[cite: 1]。
 </div>
-
-<br>
-<strong>MACHIKOTO は日本が大好きで、日本を応援しています！❤️</strong>[cite: 1]
