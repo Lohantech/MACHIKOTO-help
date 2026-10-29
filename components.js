@@ -1,8 +1,41 @@
 // ==========================================================================
-// CENTRALIZED COMPONENTS & SEARCH ENGINE (HEADER, NAV, FOOTER)
+// COMPOSANTS CENTRALISÉS & MOTEUR DE RECHERCHE (HEADER, NAV, FOOTER)
 // ==========================================================================
 
+// Liste unique des articles : titre + mots-clés de recherche.
+// (Pour ajouter un article : ajouter une entrée ici + un fichier articles/<id>.md
+//  + une entrée dans metadataMap de section/article.html)
+const ARTICLES = [
+  {
+    id: 'browser',
+    title: 'ブラウザの設定方法（ホームページと新しいタブ）',
+    keywords: ['ブラウザ', 'browser', 'タブ', '新しいタブ', 'ホームページ', 'ホーム', '設定', '起動',
+               'firefox', 'chrome', 'edge', 'safari', 'ファイアフォックス', 'クローム', 'エッジ', 'サファリ']
+  },
+  {
+    id: 'SPC',
+    title: 'プライバシーポリシーおよび利用規約',
+    keywords: ['プライバシー', 'ポリシー', '規約', '利用規約', 'spc', 'cookie', 'クッキー', '不具合',
+               '個人情報', 'ローカルストレージ', 'キャッシュ', 'privacy']
+  },
+  {
+    id: 'Credit',
+    title: 'クレジット表示と貢献者',
+    keywords: ['クレジット', 'credit', '貢献者', '素材', '作者', '早乙女', 'ロアン', '写真',
+               'アイコン', 'flaticon', 'freepik', 'github']
+  }
+];
+
+// Chemin vers la page article, selon l'endroit où l'on se trouve.
+let ROOT_PATH = '';
+
+function articleUrl(id) {
+  return `${ROOT_PATH}section/article.html?doc=${encodeURIComponent(id)}`;
+}
+
 function loadHeader(rootPath = "") {
+  ROOT_PATH = rootPath;
+
   const headerHTML = `
   <div id="topbar">
     <a href="https://wahoo.japan-vi.be/index">MACHIKOTO</a>
@@ -11,19 +44,19 @@ function loadHeader(rootPath = "") {
   <header id="header">
     <div id="header-inner">
       <a href="https://wahoo.japan-vi.be/index" id="logo-area">
-        <img src="${rootPath}aero_touch/logo.svg" alt="MACHIKOTO" onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='block';" />
+        <img id="logo-img" src="${rootPath}aero_touch/logo.svg" alt="MACHIKOTO" />
         <div style="display:none;" id="logo-fallback"><span>MACHIKOTO</span></div>
       </a>
 
       <div id="welcome-search">
         <div id="welcome">
-          <h1>ようこそ MACHIKOTO | ヘルプ</h1>
+          <div class="welcome-title">ようこそ MACHIKOTO | ヘルプ</div>
           <p>お探しのサポート情報を検索するか、<br>下のカテゴリからお選びください。</p>
         </div>
-        <div id="search-box">
-          <input type="text" placeholder="記事・キーワードを検索…" id="searchInput" />
-          <button onclick="doSearch()">検索</button>
-        </div>
+        <form id="search-box" role="search">
+          <input type="text" placeholder="記事・キーワードを検索…" id="searchInput" autocomplete="off" aria-label="検索" />
+          <button type="submit">検索</button>
+        </form>
       </div>
     </div>
   </header>
@@ -31,36 +64,38 @@ function loadHeader(rootPath = "") {
   <nav id="nav-strip">
     <ul>
       <li><a href="${rootPath}index.html">🏠 ホーム</a></li>
-      <li><a href="${rootPath}section/article.html?doc=broswer">初めてご利用の方はこちらをクリック</a></li>
-      <li><a href="${rootPath}section/article.html?doc=SPC">サイトの不具合</a></li>
+      <li><a href="${articleUrl('browser')}">初めてご利用の方はこちらをクリック</a></li>
+      <li><a href="${articleUrl('SPC')}">サイトの不具合</a></li>
     </ul>
   </nav>
   `;
 
   const headerContainer = document.getElementById('global-header');
-  if (headerContainer) {
-    headerContainer.innerHTML = headerHTML;
-    
-    // Support de la touche Entrée pour la recherche
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-      searchInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          doSearch();
-        }
-      });
-    }
-  }
+  if (!headerContainer) return;
+  headerContainer.innerHTML = headerHTML;
+
+  // Logo : si l'image est absente, on affiche le texte de secours
+  const logo = document.getElementById('logo-img');
+  logo.addEventListener('error', function () {
+    logo.style.display = 'none';
+    document.getElementById('logo-fallback').style.display = 'block';
+  });
+
+  // Le formulaire gère à la fois le bouton et la touche Entrée
+  document.getElementById('search-box').addEventListener('submit', function (e) {
+    e.preventDefault();
+    doSearch();
+  });
 }
 
 function loadFooter(rootPath = "") {
   const footerHTML = `
   <footer id="footer">
     <div id="footer-links">
-      <a href="${rootPath}section/article.html?doc=SPC">利用規約</a>
-      <a href="${rootPath}section/article.html?doc=SPC">プライバシーポリシー</a>
-      <a href="${rootPath}section/article.html?doc=SPC">Cookie設定</a>
+      <a href="${articleUrl('SPC')}">利用規約</a>
+      <a href="${articleUrl('SPC')}">プライバシーポリシー</a>
+      <a href="${articleUrl('SPC')}">Cookie設定</a>
+      <a href="${articleUrl('Credit')}">クレジット</a>
       <a href="mailto:support@japan-vi.be">お問い合わせ</a>
     </div>
     <div id="footer-copy">
@@ -73,35 +108,41 @@ function loadFooter(rootPath = "") {
   if (footerContainer) footerContainer.innerHTML = footerHTML;
 }
 
-// Moteur de recherche tolérant (recherche partielle)
+// Normalise : minuscules, pleine largeur -> demi-largeur (ＡＢＣ -> abc), katakana/hiragana unifiés
+function normalize(str) {
+  return str
+    .normalize('NFKC')
+    .toLowerCase()
+    .replace(/[ぁ-ゖ]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60))
+    .trim();
+}
+
+// Moteur de recherche tolérant (recherche partielle dans le titre et les mots-clés)
 function doSearch() {
   const searchInput = document.getElementById('searchInput');
   if (!searchInput) return;
-  
-  const q = searchInput.value.trim().toLowerCase();
+
+  const q = normalize(searchInput.value);
   if (!q) return;
 
-  // Adaptateur de chemin (racine vs dossier section)
-  const isInSection = window.location.pathname.includes('/section/');
-  const prefix = isInSection ? './' : './section/';
+  let best = null;
+  let bestScore = 0;
 
-  // Mots-clés élargis et caractères individuels
-  const browserKeywords = ['ブ', 'ブラ', 'ブラウザ', 'browser', 'タブ', 'ホーム', '設定', 'firefox', 'chrome', 'edge', 'safari'];
-  const spcKeywords = ['プ', 'プラ', 'プライバシー', '規約', '規', 'spc', 'cookie', 'クッキー', '不具合', '個人情報', 'ポリシー', '利用規約'];
-  const creditKeywords = ['ク', 'クレ', 'クレジット', 'credit', '貢献者', '素材', '作者', '早乙女', 'ロアン', '写真'];
+  ARTICLES.forEach(article => {
+    let score = 0;
+    if (normalize(article.title).includes(q)) score += 3;
+    article.keywords.forEach(kw => {
+      const k = normalize(kw);
+      if (k === q) score += 5;                    // correspondance exacte
+      else if (k.includes(q)) score += 2;         // saisie partielle (ex. "ブラ")
+      else if (q.length >= 2 && q.includes(k)) score += 1; // phrase contenant le mot-clé
+    });
+    if (score > bestScore) { bestScore = score; best = article; }
+  });
 
-  // Verification
-  const isBrowser = browserKeywords.some(kw => kw.includes(q) || q.includes(kw));
-  const isSpc = spcKeywords.some(kw => kw.includes(q) || q.includes(kw));
-  const isCredit = creditKeywords.some(kw => kw.includes(q) || q.includes(kw));
-
-  if (isBrowser) {
-    window.location.href = prefix + 'article.html?doc=broswer';
-  } else if (isSpc) {
-    window.location.href = prefix + 'article.html?doc=SPC';
-  } else if (isCredit) {
-    window.location.href = prefix + 'article.html?doc=Credit';
+  if (best) {
+    window.location.href = articleUrl(best.id);
   } else {
-    alert('「' + searchInput.value + '」に一致する記事が見つかりませんでした。');
+    alert('「' + searchInput.value.trim() + '」に一致する記事が見つかりませんでした。');
   }
 }
