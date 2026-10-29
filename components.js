@@ -53,7 +53,6 @@ function loadHeader(rootPath = "") {
         </div>
         <form id="search-box" role="search">
           <div class="search-input-wrapper">
-            <span class="search-icon">🔍</span>
             <input type="text" placeholder="記事・キーワードを検索…" id="searchInput" autocomplete="off" aria-label="検索" />
           </div>
           <button type="submit" class="win7-button">検索</button>
