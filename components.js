@@ -1,10 +1,10 @@
 // ==========================================================================
-// COMPOSANTS CENTRALISÉS & MOTEUR DE RECHERCHE (HEADER, NAV, FOOTER)
+// CENTRALIZED COMPONENTS & SEARCH ENGINE (HEADER, NAV, FOOTER)
 // ==========================================================================
 
-// Liste unique des articles : titre + mots-clés de recherche.
-// (Pour ajouter un article : ajouter une entrée ici + un fichier articles/<id>.md
-//  + une entrée dans metadataMap de section/article.html)
+// Single list of articles: title + search keywords[cite: 1].
+// (To add an article: add an entry here + a file articles/<id>.md[cite: 1]
+//  + an entry in metadataMap of section/article.html)[cite: 1]
 const ARTICLES = [
   {
     id: 'browser',
@@ -26,7 +26,7 @@ const ARTICLES = [
   }
 ];
 
-// Chemin vers la page article, selon l'endroit où l'on se trouve.
+// Path to the article page, depending on the current location[cite: 1].
 let ROOT_PATH = '';
 
 function articleUrl(id) {
@@ -74,14 +74,14 @@ function loadHeader(rootPath = "") {
   if (!headerContainer) return;
   headerContainer.innerHTML = headerHTML;
 
-  // Logo : si l'image est absente, on affiche le texte de secours
+  // Logo: if the image is missing, display the fallback text[cite: 1]
   const logo = document.getElementById('logo-img');
   logo.addEventListener('error', function () {
     logo.style.display = 'none';
     document.getElementById('logo-fallback').style.display = 'block';
   });
 
-  // Le formulaire gère à la fois le bouton et la touche Entrée
+  // The form handles both the button and the Enter key[cite: 1]
   document.getElementById('search-box').addEventListener('submit', function (e) {
     e.preventDefault();
     doSearch();
@@ -108,7 +108,7 @@ function loadFooter(rootPath = "") {
   if (footerContainer) footerContainer.innerHTML = footerHTML;
 }
 
-// Normalise : minuscules, pleine largeur -> demi-largeur (ＡＢＣ -> abc), katakana/hiragana unifiés
+// Normalize: lowercase, full-width -> half-width (ＡＢＣ -> abc), unified katakana/hiragana[cite: 1]
 function normalize(str) {
   return str
     .normalize('NFKC')
@@ -117,7 +117,7 @@ function normalize(str) {
     .trim();
 }
 
-// Moteur de recherche tolérant (recherche partielle dans le titre et les mots-clés)
+// Tolerant search engine (partial search in title and keywords)[cite: 1]
 function doSearch() {
   const searchInput = document.getElementById('searchInput');
   if (!searchInput) return;
@@ -133,9 +133,9 @@ function doSearch() {
     if (normalize(article.title).includes(q)) score += 3;
     article.keywords.forEach(kw => {
       const k = normalize(kw);
-      if (k === q) score += 5;                    // correspondance exacte
-      else if (k.includes(q)) score += 2;         // saisie partielle (ex. "ブラ")
-      else if (q.length >= 2 && q.includes(k)) score += 1; // phrase contenant le mot-clé
+      if (k === q) score += 5;                    // exact match[cite: 1]
+      else if (k.includes(q)) score += 2;         // partial input (e.g. "ブラ")[cite: 1]
+      else if (q.length >= 2 && q.includes(k)) score += 1; // phrase containing the keyword[cite: 1]
     });
     if (score > bestScore) { bestScore = score; best = article; }
   });
