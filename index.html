@@ -7,131 +7,74 @@
   <link rel="icon" type="image/png" href="aero_touch/favicon.png">
   <link rel="canonical" href="https://help.japan-vi.be/index">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="section_style\homehelp.css">
+  <link rel="stylesheet" href="section_style/homehelp.css">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<!-- ── Top Bar ── -->
-<div id="topbar">
-  <a href="https://wahoo.japan-vi.be/index">MACHIKOTO</a>
-</div>
+  <!-- Centralized Header Container -->
+  <div id="global-header"></div>
 
-<!-- ── Header ── -->
-<header id="header">
-  <div id="header-inner">
-
-    <a href="https://wahoo.japan-vi.be/index" id="logo-area">
-      <img src="aero_touch/logo.svg" alt="MACHIKOTO" onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='block';" />
-      <div style="display:none;" id="logo-fallback"><span>MACHIKOTO</span></div>
-    </a>
-
-    <div id="welcome-search">
-      <div id="welcome">
-        <h1>ようこそ MACHIKOTO | ヘルプ</h1>
-        <p>お探しのサポート情報を検索するか、<br>下のカテゴリからお選びください。</p>
-      </div>
-      <div id="search-box">
-        <input type="text" placeholder="記事・キーワードを検索…" id="searchInput" />
-        <button onclick="doSearch()">検索</button>
-      </div>
-    </div>
-  </div>
-</header>
-
-<!-- ── Nav Strip ── -->
-<nav id="nav-strip">
-  <ul>
-    <li><a href="section/broswer.html">初めてご利用の方はこちらをクリック</a></li>
-    <li><a href="section/SPC.html">サイトの不具合</a></li>
-  </ul>
-</nav>
-
-<main id="main">
-
-  <div id="featured">
-    <span class="feat-label">★ 注目</span>
-    <div class="feat-text">
-      <h2>最新情報を把握している</h2>
-      <p>このFAQで定期的に最新情報をご確認ください。
-        <a href="section/SPC.html">詳細を見る →</a></p>
-    </div>
-  </div>
+  <main id="main">
 
     <div id="featured">
-    <span class="feat-label">★ 注目</span>
-    <div class="feat-text">
-      <h2>【ご利用方法とお問い合わせ】</h2>
-      <p>
-• サイトを表示するには、ブラウザの**ページ再読み込み（リフレッシュ）**を行ってください。
-• 万が一、不具合や問題が解決しない場合は、大変お手数ですが、当サービスのヘルプデスク（ contact@japan-vi.be ）までメールにてご連絡いただけますようお願い申し上げます。
-MACHIKOTO プロジェクトチーム</p>
-    </div>
-  </div>
-
-  <div id="categories">
-
-    <div class="category-banner">
-      <div class="cat-header">
-        <span id="ガイド" class="icon">🏁</span>ガイド
-      </div>
-      <div class="cat-body">
-        <a href="section/broswer.html">ブラウザの設定方法（ホームページと新しいタブ）</a>
+      <span class="feat-label">★ 注目</span>
+      <div class="feat-text">
+        <h2>最新情報を把握している</h2>
+        <p>このFAQで定期的に最新情報をご確認ください。
+          <a href="section/article.html?doc=SPC">詳細を見る →</a></p>
       </div>
     </div>
 
-    <div class="category-banner">
-      <div class="cat-header">
-        <span id="プライバシー・ポリシーと規約" class="icon">⚠️</span> プライバシーポリシーおよび利用規約
+    <div id="categories">
+
+      <div class="category-banner">
+        <div class="cat-header">
+          <span id="ガイド" class="icon">🏁</span>ガイド
+        </div>
+        <div class="cat-body">
+          <a href="section/article.html?doc=broswer">ブラウザの設定方法（ホームページと新しいタブ）</a>
+        </div>
       </div>
-      <div class="cat-body">
-        <a href="section/SPC.html">プライバシーポリシーおよび利用規約</a>
+
+      <div class="category-banner">
+        <div class="cat-header">
+          <span id="プライバシー・ポリシーと規約" class="icon">⚠️</span> プライバシーポリシーおよび利用規約
+        </div>
+        <div class="cat-body">
+          <a href="section/article.html?doc=SPC">プライバシーポリシーおよび利用規約</a>
+        </div>
       </div>
+
+      <div class="category-banner">
+        <div class="cat-header">
+          <span id="クレジット" class="icon">ℹ️</span> クレジット表示
+        </div>
+        <div class="cat-body">
+          <a href="section/article.html?doc=Credit">クレジット表示と貢献者</a>
+        </div>
+      </div>
+
+      <div class="category-banner">
+        <div class="cat-header">
+          <span id="お問い合わせ" class="icon">📞</span> お問い合わせ
+        </div>
+        <div class="cat-body">
+          <a href="mailto:support@japan-vi.be">メールでお問い合わせ</a>
+        </div>
+        <p style="padding: 0 12px 10px; font-size: 11px; color: var(--gray-text);">(既定のメールソフトが起動します)</p>
+      </div>
+
     </div>
+  </main>
 
-    <div class="category-banner">
-      <div class="cat-header">
-        <span id="クレジット" class="icon">ℹ️</span> クレジット表示
-      </div>
-      <div class="cat-body">
-        <a href="section/Credit.html">クレジット表示と貢献者</a>
-      </div>
-    </div>
+  <!-- Centralized Footer Container -->
+  <div id="global-footer"></div>
 
-    <div class="category-banner">
-      <div class="cat-header">
-        <span id="お問い合わせ" class="icon">📞</span> お問い合わせ
-      </div>
-      <div class="cat-body">
-        <a href="mailto:support@japan-vi.be">メールでお問い合わせ</a>
-      </div>
-        <p>(既定のメールソフトが起動します)</p>
-    </div>
-
-  </div>
-</main>
-
-<!-- ── Footer ── -->
-<footer id="footer">
-  <div id="footer-links">
-    <a href="section/SPC.html">利用規約</a>
-    <a href="section/SPC.html">プライバシーポリシー</a>
-    <a href="section/SPC.html">Cookie設定</a>
-    <a href="mailto:support@japan-vi.be">お問い合わせ</a>
-  </div>
-  <div id="footer-copy">
-    <strong>2025 - 2026 © MACHIKOTO</strong> — あなたのプライバシーを尊重します。いつでもデフォルトに戻せます。
-  </div>
-</footer>
-
-<script>
-  function doSearch() {
-    const q = document.getElementById('searchInput').value.trim();
-    if (q) alert('検索中: ' + q);
-  }
-  document.getElementById('searchInput').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') doSearch();
-  });
-</script>
+  <script src="components.js"></script>
+  <script>
+    loadHeader("./");
+    loadFooter("./");
+  </script>
 </body>
 </html>
