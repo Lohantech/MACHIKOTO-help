@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MACHIKOTO | ヘルプ</title>
+  <link rel="icon" type="image/png" href="../aero_touch/favicon.png">
+  <link rel="canonical" href="https://help.japan-vi.be/index">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="../section_style/homehelp.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+  
+  <!-- Markdown parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+  <!-- Centralized Header Container -->
+  <div id="global-header"></div>
+
+  <div id="breadcrumb">
+    <a href="../index.html">ホーム</a> <span>&gt;</span> <span id="article-title-crumb">記事</span>
+  </div>
+
+  <main id="main" class="with-sidebar">
+
+    <div id="article">
+
+      <div id="article-header">
+        <h1 id="article-title">読み込み中...</h1>
+        <div class="meta" id="article-meta">最終更新：2026年10月11日</div>
+      </div>
+
+      <!-- Container where markdown text is rendered -->
+      <div id="article-body"></div>
+
+      <div id="article-feedback">
+        <span>この記事は役に立ちましたか？</span>
+        <button onclick="feedback(true)">👍 はい</button>
+        <button onclick="feedback(false)">👎 いいえ</button>
+        <span id="feedback-msg" style="color:var(--blue-mid);display:none;"></span>
+      </div>
+
+    </div>
+
+    <aside id="sidebar">
+      <div class="side-box">
+        <div class="side-title">📞 お問い合わせ</div>
+        <ul>
+          <li><a href="mailto:support@japan-vi.be">メールでお問い合わせ</a></li>
+        </ul>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Centralized Footer Container -->
+  <div id="global-footer"></div>
+
+  <script src="../components.js"></script>
+  <script>
+    loadHeader("../");
+    loadFooter("../");
+
+    const metadataMap = {
+      'broswer': {
+        title: 'ブラウザの設定方法（ホームページと新しいタブ）',
+        category: '起動・設定'
+      },
+      'Credit': {
+        title: 'クレジット表示と貢献者',
+        category: 'プロジェクト情報'
+      },
+      'SPC': {
+        title: 'プライバシーポリシーおよび利用規約',
+        category: '規約・ポリシー'
+      }
+    };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const docName = urlParams.get('doc') || 'broswer';
+
+    if (metadataMap[docName]) {
+      document.title = `${metadataMap[docName].title} | MACHIKOTO`;
+      document.getElementById('article-title').textContent = metadataMap[docName].title;
+      document.getElementById('article-title-crumb').textContent = metadataMap[docName].title;
+      document.getElementById('article-meta').textContent = `最終更新：2026年10月11日 | カテゴリ：${metadataMap[docName].category}`;
+    }
+
+    fetch(`../articles/${docName}.md`)
+      .then(response => {
+        if (!response.ok) throw new Error('File not found');
+        return response.text();
+      })
+      .then(markdownText => {
+        document.getElementById('article-body').innerHTML = marked.parse(markdownText);
+      })
+      .catch(error => {
+        document.getElementById('article-body').innerHTML = '<p>記事が見つかりませんでした。</p>';
+      });
+
+    function feedback(ok) {
+      const msg = document.getElementById('feedback-msg');
+      msg.textContent = ok ? 'ありがとうございます！' : 'フィードバックを送信しました。';
+      msg.style.display = 'inline';
+    }
+  </script>
+</body>
+</html>
