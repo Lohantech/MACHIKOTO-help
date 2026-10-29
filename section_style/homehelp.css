@@ -11,32 +11,29 @@
   --gray-light:  #f4f4f4;
   --white:       #ffffff;
   --radius:      6.5px;
-  --font-jp: 'Hiragino Kaku Gothic ProN', 'Meiryo', 'MS PGothic', sans-serif;
+  --font-jp: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Meiryo', 'MS PGothic', sans-serif;
 }
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
   height: 100%;
 }
 
-#main {
-  width: 100%;
-  max-width: 960px;
-  margin: 12px auto;
-  padding: 0 10px;
-}
-
+/* Colonne flex : le <main> prend l'espace libre, le pied de page reste en bas
+   (l'ancienne grille à 3 lignes étirait le fil d'Ariane sur les pages d'article) */
 body {
   font-family: var(--font-jp);
   font-size: 13px;
   color: var(--black);
-  background: var(--white);  
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
-
-/* ── Reset ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+#main { flex: 1 0 auto; }
+#global-footer { margin-top: auto; }
 a { color: var(--blue-mid); text-decoration: none; }
 a:hover { text-decoration: underline; color: var(--orange); }
 
@@ -99,7 +96,7 @@ a:hover { text-decoration: underline; color: var(--orange); }
   flex-wrap: wrap;
 }
 #welcome { flex: 1; min-width: 160px; }
-#welcome h1 {
+#welcome .welcome-title {
   font-size: 15px;
   font-weight: 700;
   color: var(--blue-dark);
@@ -117,6 +114,7 @@ a:hover { text-decoration: underline; color: var(--orange); }
   align-items: center;
   gap: 0;
   border-radius: var(--radius);
+  border: 1px solid var(--blue-border);
   overflow: hidden;
   background: var(--white);
 }
@@ -170,6 +168,7 @@ a:hover { text-decoration: underline; color: var(--orange); }
 
 /* ── Main layout ── */
 #main {
+  width: 100%;
   max-width: 960px;
   margin: 12px auto;
   padding: 0 10px;
@@ -245,6 +244,7 @@ a:hover { text-decoration: underline; color: var(--orange); }
 /* ── Article ── */
 #article {
   flex: 1;
+  min-width: 0; /* évite que les longues URL fassent déborder la page */
   border: 1px solid var(--blue-border);
   border-radius: var(--radius);
   background: var(--white);
@@ -301,6 +301,19 @@ a:hover { text-decoration: underline; color: var(--orange); }
   margin-bottom: 12px;
 }
 #article-body ol li { margin-bottom: 5px; }
+
+#article-body a { text-decoration: underline; }
+#article-body code {
+  background: var(--gray-light);
+  border: 1px solid var(--blue-border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 12px;
+  word-break: break-all;
+}
+#article-body .note ul { margin: 6px 0 0; }
+#article-body .note,
+#article-body .warning { line-height: 1.7; }
 
 #article-body .note {
   background: var(--blue-light);
