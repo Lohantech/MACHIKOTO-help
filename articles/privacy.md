@@ -34,7 +34,7 @@
 
 ## 5. お問い合わせ
 本規約に関するご質問や、サイトに関する問題がございましたら、いつでも以下のメールアドレスまでご連絡ください。
-- ✉️ **サポートメール：** <a href="mailto:support@japan-vi.be">support@japan-vi.be</a>
+- ✉️ **サポートメール：** <a href="mailto:contact@japan-vi.be">contact@japan-vi.be</a>
 ---
 
 <div class="note">
