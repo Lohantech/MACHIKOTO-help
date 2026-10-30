@@ -103,7 +103,7 @@ function loadFooter(rootPath = "") {
       <a href="${articleUrl('SPC')}">プライバシーポリシー</a>
       <a href="${articleUrl('SPC')}">Cookie設定</a>
       <a href="${articleUrl('Credit')}">クレジット</a>
-      <a href="mailto:support@japan-vi.be">お問い合わせ</a>
+      <a href="mailto:contact@japan-vi.be">お問い合わせ</a>
     </div>
     <div id="footer-copy">
       <strong>2025 - 2026 © MACHIKOTO</strong> — あなたのプライバシーを尊重します。いつでもデフォルトに戻せます。
